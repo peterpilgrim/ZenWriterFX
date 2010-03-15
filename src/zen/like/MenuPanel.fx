@@ -10,6 +10,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
+import javafx.scene.layout.VBox;
 
 /**
  * @author dick
@@ -57,9 +58,23 @@ public class MenuPanel extends Group {
         height: bind height
         opacity: 0.5
     }
-    
-    init {
-        content = rectangle
+
+    var saveButton: WorkMenuButton;
+    var workButton: WorkMenuButton;
+
+    postinit {
+        content = [
+            rectangle,
+            VBox {
+                width: 160
+                height: 200
+                spacing: 5
+                content: [
+                    saveButton = WorkMenuButton{ content: "S" },
+                    workButton = WorkMenuButton{ content: "W" },
+                ]
+            }
+        ]
     }
 
 }

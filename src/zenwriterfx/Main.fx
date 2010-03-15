@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import zen.like.TextEditor;
 import javafx.ext.swing.SwingComponent;
 import zen.like.MenuPanel;
+import zen.like.LineBorder;
 
 /**
  * @author dick
@@ -22,22 +23,24 @@ def theme = Theme.DEFAULT;
 def keyTyped = function(): Void {
     theme.playClick();
 }
+def menuPanel = MenuPanel {};
 def editor = TextEditor.create(theme.font, theme.textColor, theme.selectionColor, theme.selectionTextColor, keyTyped);
 def editorNode: SwingComponent = editor.node as SwingComponent;
 
-def menuPanel = MenuPanel {};
+var lineBorder: LineBorder = LineBorder{ item: editorNode };
+
 
 editorNode.focusTraversable = true;
 
 var width: Number = bind stage.width on replace {
-    editorNode.width = width * (theme.endX - theme.beginX);
-    editorNode.translateX = width * theme.beginX;
+    lineBorder.width = width * (theme.endX - theme.beginX);
+    lineBorder.translateX = width * theme.beginX;
     menuPanel.x = width * theme.panelX;
     menuPanel.width = width * theme.panelWidth;
 };
 var height: Number = bind stage.height on replace {
-    editorNode.height = height * (theme.endY - theme.beginY);
-    editorNode.translateY = height * theme.beginY;
+    lineBorder.height = height * (theme.endY - theme.beginY);
+    lineBorder.translateY = height * theme.beginY;
     menuPanel.y = height * theme.panelY;
     menuPanel.height = height * theme.panelHeight;
 };
@@ -57,7 +60,7 @@ def stage: Stage = Stage {
                 fitHeight: bind height
             }
 
-            editorNode,
+            lineBorder,
             menuPanel
         ]
         fill: theme.fill
