@@ -16,6 +16,8 @@ import java.util.Random;
 public class Theme {
     public-init var name: String;
     public-init var backgroundImage: String;
+    public-init var backgroundAudio: String;
+    public-init var backgroundAudioVolume = 1.0;
     public-init var beginX = 0.1;
     public-init var beginY = 0.1;
     public-init var endX = 0.7;
@@ -83,6 +85,8 @@ def themes: Theme[] = [
         name: DEFAULT
         opacity: 0.5
         backgroundImage: "{__DIR__}images/backgrounds/WriterZen-BG038.JPG"
+        backgroundAudio: "{__DIR__}sounds/background/OceanWave.wav"
+        backgroundAudioVolume: 0.3
         font: Font.font("Helvetica", 24)
         clickSound: "{__DIR__}sounds/keyclick/typewriter-key.wav"
     },
@@ -90,6 +94,21 @@ def themes: Theme[] = [
         name: "Dick"
         backgroundImage: "{__DIR__}images/backgrounds/WriterZen-BG003.JPG"
         font: Font.font("Rufscript", 24)
+    },
+    Theme {
+        name: "netbeans"
+        opacity: 0.8
+        backgroundImage: "{__DIR__}images/backgrounds/netbeans.png"
+        font: Font.font("Courier", 24)
+        clickSound: "{__DIR__}sounds/keyclick/typewriter-key.wav"
+        beginX: 0.27
+        beginY: 0.2
+        endX: 0.9
+        endY: 0.695
+        panelX: 0.9
+        panelY: 0.2
+        panelWidth: 0.1
+        panelHeight: 0.6
     },
     Theme {
         name: "Ugly"

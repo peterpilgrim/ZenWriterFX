@@ -14,13 +14,9 @@ import javafx.ext.swing.SwingComponent;
 import zen.like.MenuPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import zen.like.LineBorder;
-
-/** Default initial screen width */
-def DEFAULT_WIDTH=800;
-/** Default initial screen height */
-def DEFAULT_HEIGHT=600;
-
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.stage.Screen;
 
 public function run(args: String[]) {
     def themeName = if (sizeof args == 0) Theme.DEFAULT else args[0];
@@ -35,66 +31,99 @@ public function run(args: String[]) {
     def keyTyped = function(): Void {
         theme.playClick();
     }
-    def menuPanel = MenuPanel {};
     def editor = TextEditor.create(theme.font, theme.textColor, theme.selectionColor, theme.selectionTextColor, keyTyped);
     def editorNode: SwingComponent = editor.node as SwingComponent;
     editor.load(true);
 
-    var lineBorder: LineBorder = LineBorder{ item: editorNode };
+    def menuPanel = MenuPanel {};
 
     editorNode.focusTraversable = true;
 
     var width: Number = bind stage.width on replace {
-        lineBorder.width = width * (theme.endX - theme.beginX);
-        lineBorder.translateX = width * theme.beginX;
+        editorNode.width = width * (theme.endX - theme.beginX);
+        editorNode.translateX = width * theme.beginX;
         menuPanel.x = width * theme.panelX;
         menuPanel.width = width * theme.panelWidth;
     };
     var height: Number = bind stage.height on replace {
-        lineBorder.height = height * (theme.endY - theme.beginY);
-        lineBorder.translateY = height * theme.beginY;
+        editorNode.height = height * (theme.endY - theme.beginY);
+        editorNode.translateY = height * theme.beginY;
         menuPanel.y = height * theme.panelY;
         menuPanel.height = height * theme.panelHeight;
     };
 
-    def bgPlayer = MediaPlayer {
-        volume: 0.5
-        media: Media {
-            source: Utilities.makeLocal("{__DIR__}sounds/background/OceanWave.wav");
-        }
-        autoPlay: true
-        repeatCount: MediaPlayer.REPEAT_FOREVER
-        onError: function(e) {
-            println(e);
-        }
+    if (theme.backgroundAudio != null) {
+        // Start a timeline to initialize audio AFTER everything
+        // else has come up
+        Timeline {
+            repeatCount: 1
+            keyFrames: KeyFrame {
+                time: 0.3s
+                action: function() {
+                    MediaPlayer {
+                        volume: theme.backgroundAudioVolume
+                        media: Media {
+                            source: Utilities.makeLocal(theme.backgroundAudio);
+                        }
+                        autoPlay: true
+                        repeatCount: MediaPlayer.REPEAT_FOREVER
+                        onError: function(e) {
+                            println(e);
+                        }
+                    }
+                }
+            }
+        }.play();
     }
 
+    def bounds = Screen.primary.bounds;
+    def imageView =
+        ImageView {
+        opacity: 0
+        fitWidth: bind width
+        fitHeight: bind height
+    }
+
+    Timeline {
+        repeatCount: 1
+        keyFrames: [
+            KeyFrame {
+                time: 0.1s
+                action: function() {
+                    imageView.image = Image {
+                        backgroundLoading: false
+                        url: theme.backgroundImage
+                    }
+
+                    Timeline {
+                        repeatCount: 1
+                        keyFrames: [
+                            KeyFrame {
+                                time: 0.8s
+                                values: imageView.opacity => theme.opacity
+                            }
+                        ]
+                    }.play();
+                }
+            }
+        ]
+    }.play();
 
     def stage: Stage = Stage {
         fullScreen: true
-        width: DEFAULT_WIDTH
-        height: DEFAULT_HEIGHT
         title: "ZenWriterFX"
+        width: bounds.width
+        height: bounds.height
         scene: scene = Scene {
             content: [
-                ImageView {
-                    opacity: theme.opacity
-                    image: Image {
-                        backgroundLoading: true
-                        url: theme.backgroundImage
-                    }
-                    fitWidth: bind width
-                    fitHeight: bind height
-                }
-
-                lineBorder,
+                imageView,
+                editorNode,
                 menuPanel
             ]
             fill: theme.fill
         }
-    };
-    
-    editorNode.requestFocus();
+    }
 
+    editorNode.requestFocus();
     Utilities.addShutdown(Application { editor: editor });
 }
