@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
 
 /**
  * @author dick
@@ -23,7 +24,7 @@ public class MenuPanel extends Group {
     public var width: Number;
     public var height: Number;
 
-    override var opacity = 0;
+    override var opacity = 1.0;
     override var onMouseEntered = function(e) {
         Timeline {
             repeatCount: 1
@@ -59,22 +60,29 @@ public class MenuPanel extends Group {
         opacity: 0.5
     }
 
-    var saveButton: WorkMenuButton;
-    var workButton: WorkMenuButton;
+    public var saveButton: WorkMenuButton;
+    public var workButton: WorkMenuButton;
+
+    def MARGIN=3;
 
     postinit {
         content = [
+
             rectangle,
             VBox {
-                width: 160
-                height: 200
                 spacing: 5
+                layoutX: bind x+MARGIN;
+                layoutY: bind y+MARGIN;
+                width: bind width-2*MARGIN;
+                height: bind height-2*MARGIN;
                 content: [
-                    saveButton = WorkMenuButton{ content: "S" },
                     workButton = WorkMenuButton{ content: "W" },
+                    saveButton = WorkMenuButton{ content: "S" },
+
                 ]
             }
         ]
     }
+
 
 }

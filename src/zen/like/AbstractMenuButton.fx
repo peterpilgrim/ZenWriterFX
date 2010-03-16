@@ -119,12 +119,12 @@ public abstract class AbstractMenuButton extends CustomNode, Resizable {
 
     public override function getPrefWidth(height: Number) : Number
     {
-        -1
+        return if ( width > 0) width else -1
     }
 
     public override function getPrefHeight(width: Number) : Number
     {
-        -1
+        return if ( height > 0) height else -1
     }
 
 }

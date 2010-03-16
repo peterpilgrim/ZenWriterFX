@@ -16,6 +16,12 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import zen.like.LineBorder;
 
+/** Default initial screen width */
+def DEFAULT_WIDTH=800;
+/** Default initial screen height */
+def DEFAULT_HEIGHT=600;
+
+
 public function run(args: String[]) {
     def themeName = if (sizeof args == 0) Theme.DEFAULT else args[0];
     def theme = Theme.getTheme(themeName);
@@ -66,6 +72,8 @@ public function run(args: String[]) {
 
     def stage: Stage = Stage {
         fullScreen: true
+        width: DEFAULT_WIDTH
+        height: DEFAULT_HEIGHT
         title: "ZenWriterFX"
         scene: scene = Scene {
             content: [
