@@ -17,6 +17,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.stage.Screen;
+import zen.like.LineBorder;
 
 public function run(args: String[]) {
     def themeName = if (sizeof args == 0) Theme.DEFAULT else args[0];
@@ -33,6 +34,7 @@ public function run(args: String[]) {
     }
     def editor = TextEditor.create(theme.font, theme.textColor, theme.selectionColor, theme.selectionTextColor, keyTyped);
     def editorNode: SwingComponent = editor.node as SwingComponent;
+    def lineBorder: LineBorder = LineBorder{ item: editorNode };
     editor.load(true);
 
     def menuPanel = MenuPanel {};
@@ -40,14 +42,14 @@ public function run(args: String[]) {
     editorNode.focusTraversable = true;
 
     var width: Number = bind stage.width on replace {
-        editorNode.width = width * (theme.endX - theme.beginX);
-        editorNode.translateX = width * theme.beginX;
+        lineBorder.width = width * (theme.endX - theme.beginX);
+        lineBorder.translateX = width * theme.beginX;
         menuPanel.x = width * theme.panelX;
         menuPanel.width = width * theme.panelWidth;
     };
     var height: Number = bind stage.height on replace {
-        editorNode.height = height * (theme.endY - theme.beginY);
-        editorNode.translateY = height * theme.beginY;
+        lineBorder.height = height * (theme.endY - theme.beginY);
+        lineBorder.translateY = height * theme.beginY;
         menuPanel.y = height * theme.panelY;
         menuPanel.height = height * theme.panelHeight;
     };
@@ -117,7 +119,7 @@ public function run(args: String[]) {
         scene: scene = Scene {
             content: [
                 imageView,
-                editorNode,
+                lineBorder,
                 menuPanel
             ]
             fill: theme.fill
