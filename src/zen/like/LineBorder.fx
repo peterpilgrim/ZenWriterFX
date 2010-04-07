@@ -6,15 +6,17 @@
 
 package zen.like;
 
-import javafx.scene.*;
+import javafx.scene.CustomNode;
+import javafx.scene.Node;
+import javafx.scene.Group;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
 import javafx.scene.layout.Resizable;
 import javafx.scene.layout.Container;
-import javafx.ext.swing.SwingComponent;
-import javafx.scene.*;
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.scene.text.*;
+import javafx.scene.text.Font;
+import javafx.ext.swing.SwingComponent;
 
 def STEP=10;
 

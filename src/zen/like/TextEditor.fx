@@ -51,6 +51,15 @@ public class TextEditor {
             }
         }
     }
+
+    public function setText( content: String ): Void {
+        textPane.setText(content);
+    }
+
+    public function getText(): String {
+        return textPane.getText();
+    }
+
 }
 
 function awtToFx(font: javafx.scene.text.Font): java.awt.Font {
