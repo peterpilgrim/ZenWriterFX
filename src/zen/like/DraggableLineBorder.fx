@@ -47,8 +47,8 @@ public class DraggableLineBorder extends CustomNode, Resizable {
     public var marginHeight: Number  = 10;
     public var minimumWidth: Number  = 100;
     public var minimumHeight: Number = 100;
-    public var maximumWidth: Number  = 700;
-    public var maximumHeight: Number = 700;
+    public var maximumWidth: Number  = 1000;
+    public var maximumHeight: Number = 1000;
     
     public var borderStrokeColor: Color = Color.BLACK;
     public var borderFillColor: Color = Color.TRANSPARENT;
@@ -324,6 +324,8 @@ public function run( args: String[] ): Void {
                     layoutY: 50
                     width: 400
                     height: 400
+                    maximumWidth: 600
+                    maximumHeight: 600
                     item: editor.node
                 }
             ]

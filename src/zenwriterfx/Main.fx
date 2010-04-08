@@ -18,6 +18,7 @@ import javafx.animation.Timeline;
 import javafx.animation.KeyFrame;
 import javafx.stage.Screen;
 import zen.like.LineBorder;
+import zen.like.DraggableLineBorder;
 
 public function run(args: String[]) {
     def themeName = if (sizeof args == 0) Theme.DEFAULT else args[0];
@@ -34,7 +35,7 @@ public function run(args: String[]) {
     }
     def editor = TextEditor.create(theme.font, theme.textColor, theme.selectionColor, theme.selectionTextColor, keyTyped);
     def editorNode: SwingComponent = editor.node as SwingComponent;
-    def lineBorder: LineBorder = LineBorder{ item: editorNode };
+    def lineBorder: DraggableLineBorder = DraggableLineBorder{ item: editorNode };
     editor.load(true);
 
     def menuPanel = MenuPanel {};
@@ -44,12 +45,14 @@ public function run(args: String[]) {
     var width: Number = bind stage.width on replace {
         lineBorder.width = width * (theme.endX - theme.beginX);
         lineBorder.translateX = width * theme.beginX;
+        lineBorder.maximumWidth = stage.width * 20;
         menuPanel.x = width * theme.panelX;
         menuPanel.width = width * theme.panelWidth;
     };
     var height: Number = bind stage.height on replace {
         lineBorder.height = height * (theme.endY - theme.beginY);
         lineBorder.translateY = height * theme.beginY;
+        lineBorder.maximumHeight = stage.height * 20;
         menuPanel.y = height * theme.panelY;
         menuPanel.height = height * theme.panelHeight;
     };
