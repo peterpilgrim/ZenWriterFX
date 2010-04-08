@@ -45,14 +45,14 @@ public function run(args: String[]) {
     var width: Number = bind stage.width on replace {
         lineBorder.width = width * (theme.endX - theme.beginX);
         lineBorder.translateX = width * theme.beginX;
-        lineBorder.maximumWidth = stage.width * 20;
+        lineBorder.maximumWidth = stage.width - 20;
         menuPanel.x = width * theme.panelX;
         menuPanel.width = width * theme.panelWidth;
     };
     var height: Number = bind stage.height on replace {
         lineBorder.height = height * (theme.endY - theme.beginY);
         lineBorder.translateY = height * theme.beginY;
-        lineBorder.maximumHeight = stage.height * 20;
+        lineBorder.maximumHeight = stage.height - 20;
         menuPanel.y = height * theme.panelY;
         menuPanel.height = height * theme.panelHeight;
     };
