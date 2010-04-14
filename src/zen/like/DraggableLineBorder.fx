@@ -19,14 +19,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.ext.swing.SwingComponent;
 import javafx.scene.input.MouseEvent;
+import javafx.geometry.BoundingBox;
 import javafx.util.Math;
-
-def STEP=10;
 
 
 /**
- * Draggable line boder
- * @author Peter
+ * Draggable line boder component
+ *
+ * @author Peter Pilgrim
  */
 public class DraggableLineBorder extends CustomNode, Resizable {
 
@@ -43,8 +43,11 @@ public class DraggableLineBorder extends CustomNode, Resizable {
         scheduleLayout();
     }
 
-    public var marginWidth: Number   = 10;
-    public var marginHeight: Number  = 10;
+
+    public var insetWidth: Number   = 10;
+
+    public var insetHeight: Number  = 10;
+
     public var minimumWidth: Number  = 100;
     public var minimumHeight: Number = 100;
     public var maximumWidth: Number  = 1000;
@@ -61,7 +64,6 @@ public class DraggableLineBorder extends CustomNode, Resizable {
         }
     };
 
-
     protected var debugRect = Rectangle {
         width: bind width
         height: bind height
@@ -77,6 +79,8 @@ public class DraggableLineBorder extends CustomNode, Resizable {
         fill: bind borderFillColor;
     };
 
+    protected var savedBoundingBox: BoundingBox;
+
     protected var n = DragNode{id: "n", hoverCursor: Cursor.N_RESIZE };
     protected var ne = DragNode{id: "ne", hoverCursor: Cursor.NE_RESIZE };
     protected var e = DragNode{id: "e", hoverCursor: Cursor.E_RESIZE };
@@ -86,6 +90,8 @@ public class DraggableLineBorder extends CustomNode, Resizable {
     protected var w = DragNode{id: "w", hoverCursor: Cursor.W_RESIZE };
     protected var nw = DragNode{id: "nw", hoverCursor: Cursor.NW_RESIZE };
     protected var dragNodes: DragNode[] = [ n, ne, e, se, s, sw, w, nw ];
+
+    protected var bevelBorder: DraggableBevel;
 
     /** Relayout flag */
     protected var needRelayout: Boolean;
@@ -102,13 +108,45 @@ public class DraggableLineBorder extends CustomNode, Resizable {
     }
 
     public override function create(): Node {
+        bevelBorder = DraggableBevel {
+            bevelWidth: bind margin
+            bevelHeight: bind margin
+            width: width
+            height: height
+            dragAction: function( node: DraggableBevel, deltaX: Number, deltaY: Number, e:MouseEvent ): Void {
+                println("deltaX={deltaX}, deltaY={deltaY}, e={e}");
+                this.layoutX += deltaX;
+                this.layoutY += deltaY;
+            }
+
+            onMouseClicked: function (e: MouseEvent): Void {
+                if ( e.clickCount == 2 ) {
+                    if ( width < maximumWidth and height < maximumHeight ) {
+                        savedBoundingBox = BoundingBox {
+                            minX: layoutX
+                            minY: layoutY
+                            width: width
+                            height: height
+                        };
+                        positionBorder( insetWidth, insetHeight, maximumWidth, maximumHeight );
+                    }
+                    else {
+                        if ( savedBoundingBox != null ) {
+                            positionBorder( savedBoundingBox.minX, savedBoundingBox.minY, savedBoundingBox.width, savedBoundingBox.height);
+                        }
+                    }
+                }
+            }
+
+        };
+
         for ( dn in dragNodes) {
             dn.size = dragNodeSize;
             dn.dragAction = dragListener;
         }
         computeLayoutDown();
         Group {
-            content: [debugRect, border, dragNodes, item ];
+            content: [debugRect, border, bevelBorder, dragNodes, item ];
         }
     }
 
@@ -136,6 +174,9 @@ public class DraggableLineBorder extends CustomNode, Resizable {
         border.translateY = m2;
         border.width  = width - margin;
         border.height = height - margin;
+
+        bevelBorder.width = width;
+        bevelBorder.height = height;
 
         positionDragNode(n,  w2,       m2 );
         positionDragNode(ne, width-m2, m2 );
@@ -172,8 +213,8 @@ public class DraggableLineBorder extends CustomNode, Resizable {
     }
 
     protected function positionBorder( x: Number, y: Number, w: Number, h: Number ): Void {
-        var x2 = Math.max(x, marginWidth );
-        var y2 = Math.max(y, marginHeight);
+        var x2 = Math.max(x, insetWidth );
+        var y2 = Math.max(y, insetHeight);
         var w2 = Math.max( Math.min(w, maximumWidth ), minimumWidth );
         var h2 = Math.max( Math.min(h, maximumHeight ), minimumHeight );
         this.layoutX = x2;
@@ -226,7 +267,8 @@ public class DraggableLineBorder extends CustomNode, Resizable {
 
 
 /**
- * The rectangle
+ * The internal draggable node component for the draggable line border.
+ * @author Peter Pilgrim
  */
 protected class DragNode extends Rectangle {
 
